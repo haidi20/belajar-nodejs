@@ -2,10 +2,10 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override')
-const logger = require('./middleware/logger');
+const logger = require('../middleware/logger');
 const app = express();
 
-const members = require('./members');
+const members = require('../members');
 
 // init middleware
 // app.use(logger);
@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // members API routes
-app.use('/api/members', require('./routes/api/member'));
+app.use('/api/members', require('../routes/api/member'));
 
 const PORT = process.env.PORT || 5000;
 
