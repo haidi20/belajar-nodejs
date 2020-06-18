@@ -1,24 +1,35 @@
 const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const methodOverride = require('method-override')
-const logger = require('./middleware/logger');
+const sequelize = require('sequelize');
+
 const app = express();
+const port = 5000;
 
-const members = require('./members');
+const connection = new sequelize('nodejs', 'phpmyadmin', 'samarinda', {
+    dialect: 'mysql',
+});
 
-// init middleware
-// app.use(logger);
+const User = connection.define('User', {
+    uuid: {
+        type: sequelize.UUID,
+        primaryKey: true,
+        defaultValue: sequelize.UUIDV4,
+    },
+    name: sequelize.STRING,
+    bio: sequelize.TEXT,
+});
 
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(bodyParser.json());
+connection.
+    sync({
+        logging: console.log,
+        force: true
+    })
+    .then(() => {
+        console.log('connection to database established successfully.');
+    })
+    .catch(err => {
+        console.log('unable to coonect ot the database: ', err);
+    });
 
-// Set static folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// members API routes
-app.use('/api/members', require('./routes/api/member'));
-
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(port, () => {
+    console.log('Running server on prot '+ port);
+});
